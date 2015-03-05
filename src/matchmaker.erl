@@ -67,10 +67,14 @@ player_by_name(Name) ->
 
 % Sorting players by MMR
 % todo: traverse list of players to find next range
-sort_players(Players) ->
-    maps:from_list(element(2, Players)).
+sort_players(InQueue) ->
     % F = fun() when in_list(K) ->
     % maps:map(F, players)
+    Players = maps:from_list(element(2, InQueue)),
+    Players.
+
+% sort_players(Player) ->
+%     lookup_players_in_queue_in_mmr_range(element(2,Player)).
 
 % Players by MMR with an overhead of 100 and less of 50 to ensure players
 % are not always playing in range of each other but not much worse than another
@@ -83,33 +87,3 @@ lookup_players_in_queue_in_mmr_range(Mmr) ->
     end,
     mnesia:transaction(F).
 
-
-%%%%%%%% OLD METHODS %%%%%%%%
-
-% lookup_players_in_queue_in_mmr_range() ->
-%     Constraint =
-%         fun(Players, Player) when Players#player.mmr < 1500 ->
-%             [Players | Player];
-%             (_, Player) ->
-%                 Player
-%         end,
-%     Find = fun() -> mnesia:foldr(Constraint, [], player) end,
-%     mnesia:transaction(Find).
-
-% lookup_players_in_queue() ->
-%     Pattern = #player{_='_'},
-%     F = fun() ->
-%             Res = mnesia:match_object(Pattern),
-%             [{N,W,L,M} ||
-%                 #player{name=N,wins=W,losses=L,mmr=M} <- Res]
-%     end,
-%     mnesia:activity(transaction, F).
-
-% lookup_players_in_queue() ->
-%     F = fun() ->
-%             MatchHead = #player{name='$1', mmr={'$2','_'}, _='_'},
-%             Guard = [{'>=', $2, 1530}, {'=<', $2, 1800}],
-%             Result = '$1',
-%             mnesia:select(player, [{MatchHead, Guard, [Result]}])
-%         end,
-%     mnesia:transaction(F).
