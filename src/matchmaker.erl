@@ -37,7 +37,7 @@ enter_queue(Player) ->
 % Find a match by team size 3v3 / 5v5
 find_match(3) ->
     PlayersInQueue = lookup_players_in_queue(),
-    maps:from_list(element(2, PlayersInQueue));
+    sort_players(PlayersInQueue);
     % sort_players(Players);
 find_match(5) ->
     false;
@@ -66,9 +66,11 @@ player_by_name(Name) ->
 %%%%% PRIVATE %%%%%
 
 % Sorting players by MMR
-% sort_players(Players) ->
-%     F = fun() when in_list(K) ->
-%     maps:map(F, players)
+% todo: traverse list of players to find next range
+sort_players(Players) ->
+    maps:from_list(element(2, Players)).
+    % F = fun() when in_list(K) ->
+    % maps:map(F, players)
 
 % Players by MMR with an overhead of 100 and less of 50 to ensure players
 % are not always playing in range of each other but not much worse than another
